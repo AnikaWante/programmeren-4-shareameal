@@ -122,65 +122,6 @@ module.exports = {
     });
   },
 
-  // getAllUsers: (req, res, next) => {
-  //   logger.debug("getAllUsers aangeroepen");
-
-  //   const queryParams = req.query;
-  //   logger.debug("U see this????????????????????");
-  //   logger.debug(queryParams);
-  //   const searchParams = [];
-
-  //   dbconnection.getConnection(function (err, connection) {
-  //     if (err) next(err); // not connected!
-
-  //     // TODO welke 2 dit worden wordt bepaald
-  //     let { lastName, isActive } = req.query;
-  //     let queryString = "SELECT * FROM `user`";
-
-  //     logger.error(lastname);
-
-  //     if (lastName || isActive) {
-  //       queryString += " WHERE ";
-  //       if (lastName) {
-  //         queryString += "`lastName` LIKE ?";
-  //         lastName = "%" + lastName + "%";
-  //         searchParams.push(lastname);
-  //       }
-  //       if (lastName && isActive) queryString += " AND ";
-  //       if (isActive) {
-  //         queryString += "`isActive` = ?";
-  //         searchParams.push(isActive ? 1 : 0);
-  //       }
-  //     }
-
-  //     queryString += ";";
-  //     console.log("string query");
-  //     logger.debug(`queryString = ${queryString}`);
-
-  //     // Use the connection
-  //     connection.query(
-  //       queryString,
-  //       searchParams,
-  //       function (error, results, fields) {
-  //         // When done with the connection, release it.
-  //         connection.release();
-
-  //         // Handle error after the release.
-  //         if (error) next(error);
-
-  //         // Don't use the connection here, it has been returned to the pool.
-  //         logger.debug(results);
-  //         logger.debug("#results = ", results.length);
-  //         logger.debug(results);
-  //         res.status(200).json({
-  //           statusCode: 200,
-  //           results: results,
-  //         });
-  //       }
-  //     );
-  //   });
-  // },
-
   //getUserProfile UC-203
   getUserProfile: (req, res, next) => {
     logger.debug("getUserProfile aangeroepen");
