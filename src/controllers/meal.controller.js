@@ -105,6 +105,108 @@ module.exports = {
   },
 
   // UC-302 Update meal (OPTIONEEL)
+  updateSingleMeal: (req, res) => {
+    //delete 30?
+    logger.debug("delteSingleMeal aangeroepen");
+
+    logger.info("req.userId = ***");
+    logger.info(req.userId);
+    const mealId = req.params.mealId;
+    const cookId = req.userId;
+    logger.debug(`Meal met ID ${mealId} wordt gezocht`);
+
+    dbconnection.getConnection(function (err, connection) {
+      if (err) next(err); // not connected!
+
+      // Use the connection
+      connection.query(
+        `SELECT * FROM meal WHERE id = ${req.params.mealId};`,
+        function (error, results, fields) {
+          // When done with the connection, release it.
+          connection.release();
+
+          // Handle error after the release.
+          if (error) next(error);
+
+          // Don't use the connection here, it has been returned to the pool.
+          logger.debug("#results = ", results.length);
+          logger.debug("#results = ", results);
+          if (results.length > 0) {
+            dbconnection.getConnection(function (err, connection) {
+              if (err) next(err); // not connected!
+
+              logger.debug("OOO mealId");
+              logger.debug(mealId);
+              logger.debug("OOO req.userId");
+              logger.debug(req.userId);
+              logger.debug("OOO results");
+              logger.debug(results);
+              logger.debug("OOO results[0].cookId");
+              logger.debug(results[0].cookId);
+              if (results[0].cookId != req.userId) {
+                return res.status(403).json({
+                  status: 403,
+                  message: `You are no owner of meal with id = ${mealId}`,
+                });
+              }
+
+              //name,
+              // description,
+              // imageUrl,
+              // dateTime,
+              // maxAmountOfParticipants,
+              // price,
+
+              // Use the connection
+              connection.query(
+                "UPDATE meal SET name = ?, description = ?, imageUrl = ?, dateTime = ?, maxAmountOfParticipants = ?, price = ?",
+                [
+                  req.body.name,
+                  req.body.description,
+                  req.body.imageUrl,
+                  req.body.dateTime,
+                  req.body.maxAmountOfParticipants,
+                  req.body.price,
+                ],
+                function (error, results, fields) {
+                  // When done with the connection, release it.
+                  connection.release();
+
+                  // Handle error after the release.
+                  if (error) next(error);
+
+                  // Don't use the connection here, it has been returned to the pool.
+                  logger.debug("#results = ", results.length);
+                  logger.debug("#results = ", results);
+
+                  connection.query(
+                    "SELECT * FROM meal WHERE `id` = ?;",
+                    [mealId],
+                    function (error, results, fields) {
+                      connection.release();
+
+                      let resultMeal = results[0];
+
+                      logger.debug("#results = ", results.length);
+                      res.status(200).json({
+                        statusCode: 200,
+                        results: resultMeal,
+                      });
+                    }
+                  );
+                }
+              );
+            });
+          } else {
+            res.status(404).json({
+              statusCode: 404,
+              message: `Meal with ID ${mealId} not found`,
+            });
+          }
+        }
+      );
+    });
+  },
 
   // UC-303 Get all meals
   getAllMeals: (req, res) => {
