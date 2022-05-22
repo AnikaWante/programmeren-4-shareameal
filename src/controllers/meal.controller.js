@@ -60,8 +60,37 @@ module.exports = {
       logger.debug("OOO req.userId");
       logger.debug(req.userId);
 
+      const allergenes = meal.allergenes;
+      logger.debug("#ALLEGENLIST");
+      logger.debug(meal.allergenes);
+      logger.debug(allergenes);
+
+      let queryallergenes;
+      if (
+        req.body.allergenes === "gluten, lactose, noten" ||
+        req.body.allergenes === "gluten, lactose" ||
+        req.body.allergenes === "gluten, noten" ||
+        req.body.allergenes === "lactose, noten" ||
+        req.body.allergenes === "gluten" ||
+        req.body.allergenes === "lactose" ||
+        req.body.allergenes === "noten" ||
+        req.body.allergenes === "1" ||
+        req.body.allergenes === "2" ||
+        req.body.allergenes === "3" ||
+        req.body.allergenes === ""
+      ) {
+        logger.debug("#req.body.allergenes");
+        logger.debug(req.body.allergenes);
+        queryallergenes = req.body.allergenes;
+      } else {
+        return res.status(400).json({
+          status: 400,
+          message: `allergens are not gluten, lactose, noten or 1, 2, 3`,
+        });
+      }
+
       connection.query(
-        "INSERT INTO `meal` (`id`, `name`, `description`, `imageUrl`, `dateTime`, `maxAmountOfParticipants`, `price`, `cookId`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+        "INSERT INTO `meal` (`id`, `name`, `description`, `imageUrl`, `dateTime`, `maxAmountOfParticipants`, `price`, `cookId`, `allergenes`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
         [
           id,
           meal.name,
@@ -71,6 +100,7 @@ module.exports = {
           meal.maxAmountOfParticipants,
           meal.price,
           userId,
+          queryallergenes,
         ],
         function (error, results, fields) {
           connection.release();
@@ -150,16 +180,33 @@ module.exports = {
                 });
               }
 
-              //name,
-              // description,
-              // imageUrl,
-              // dateTime,
-              // maxAmountOfParticipants,
-              // price,
+              let queryallergenes;
+              if (
+                req.body.allergenes === "gluten,lactose,noten" ||
+                req.body.allergenes === "gluten,lactose" ||
+                req.body.allergenes === "gluten,noten" ||
+                req.body.allergenes === "lactose,noten" ||
+                req.body.allergenes === "gluten" ||
+                req.body.allergenes === "lactose" ||
+                req.body.allergenes === "noten" ||
+                req.body.allergenes === "1" ||
+                req.body.allergenes === "2" ||
+                req.body.allergenes === "3" ||
+                req.body.allergenes === ""
+              ) {
+                logger.debug("#req.body.allergenes");
+                logger.debug(req.body.allergenes);
+                queryallergenes = req.body.allergenes;
+              } else {
+                return res.status(400).json({
+                  status: 400,
+                  message: `allergens are not gluten, lactose, noten or 1, 2, 3`,
+                });
+              }
 
               // Use the connection
               connection.query(
-                "UPDATE meal SET name = ?, description = ?, imageUrl = ?, dateTime = ?, maxAmountOfParticipants = ?, price = ?",
+                "UPDATE meal SET name = ?, description = ?, imageUrl = ?, dateTime = ?, maxAmountOfParticipants = ?, price = ?, allergenes = ?",
                 [
                   req.body.name,
                   req.body.description,
@@ -167,13 +214,14 @@ module.exports = {
                   req.body.dateTime,
                   req.body.maxAmountOfParticipants,
                   req.body.price,
+                  queryallergenes,
                 ],
                 function (error, results, fields) {
                   // When done with the connection, release it.
                   connection.release();
 
                   // Handle error after the release.
-                  if (error) next(error);
+                  if (error) throw error;
 
                   // Don't use the connection here, it has been returned to the pool.
                   logger.debug("#results = ", results.length);

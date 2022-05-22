@@ -1,5 +1,5 @@
 process.env.DB_DATABASE = process.env.DB_DATABASE || "share-a-meal";
-process.env.LOGLEVEL = "warn"; //debug
+process.env.LOGLEVEL = "debug"; //debug
 
 const chai = require("chai");
 const chaiHttp = require("chai-http");
@@ -143,6 +143,7 @@ describe("UC-301 add meal", () => {
           "https://miljuschka.nl/wp-content/uploads/2021/02/Pasta-bolognese-3-2.jpg",
         maxAmountOfParticipants: 6,
         price: 6.75,
+        allergenes: "1",
       })
       .end((err, res) => {
         logger.info(res.body);

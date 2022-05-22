@@ -1,6 +1,6 @@
 //OPTIONEEL
 process.env.DB_DATABASE = process.env.DB_DATABASE || "share-a-meal";
-process.env.LOGLEVEL = "warn"; //warn
+// process.env.LOGLEVEL = "warn"; //warn
 
 const chai = require("chai");
 const chaiHttp = require("chai-http");
@@ -248,6 +248,7 @@ describe("UC-302-1/2/4/5 Update Meal", (done) => {
           "https://miljuschka.nl/wp-content/uploads/2021/02/Pasta-bolognese-3-2.jpg",
         maxAmountOfParticipants: 6,
         price: 6.75,
+        allergenes: "",
       })
       .end((err, res) => {
         let { status, result } = res.body;
