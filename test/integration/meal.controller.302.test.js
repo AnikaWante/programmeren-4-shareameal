@@ -231,7 +231,7 @@ describe("UC-302-1/2/4/5 Update Meal", (done) => {
       });
   });
 
-  it.only("TC-302-5 Meal successfully updated, return 200 response", (done) => {
+  it.skip("TC-302-5 Meal successfully updated, return 200 response", (done) => {
     chai
       .request(server)
       .put("/api/meal/1")
